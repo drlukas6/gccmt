@@ -31,17 +31,20 @@ impl CommitType {
 #[structopt(name = "Commit options", about = "Commit type, message and body")]
 struct Opt {
 
+    /// Commit type for current changes.
     #[structopt(possible_values = &CommitType::variants(), 
                 case_insensitive = true,
                 short = "t",
                 long = "type")]
     commit_type: CommitType,
 
+    /// Commit message
     #[structopt(case_insensitive = true,
                 short = "m",
                 long = "message")]
     message: String,
 
+    /// Commit body
     #[structopt(short = "b", long = "body")]
     body: Option<String>
 }
