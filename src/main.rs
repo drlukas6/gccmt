@@ -38,14 +38,15 @@ struct Opt {
                 long = "type")]
     commit_type: CommitType,
 
+    #[structopt(short, long)]
+    urgent: bool,
+
     /// Commit message
-    #[structopt(case_insensitive = true,
-                short = "m",
-                long = "message")]
+    #[structopt(case_insensitive = true, short, long)]
     message: String,
 
     /// Commit body
-    #[structopt(short = "b", long = "body")]
+    #[structopt(short, long)]
     body: Option<String>
 }
 
@@ -56,4 +57,18 @@ fn main() {
     println!("type: {}", opt.commit_type.key());
     println!("message: {}", opt.message);
     println!("body exists: {}", opt.body != None);
+    println!("urgent: {}", opt.urgent);
+
+    println!("---------");
+
+    let commit: String;
+
+    if let Some(body) = opt.body {
+
+        commit = format!("{}: {}\n\n{}",opt.commit_type.key(), opt.message, body);
+    } else {
+        commit = format!("{}: {}", opt.commit_type.key(), opt.message);
+    }
+
+    println!("{}", commit);
 }
