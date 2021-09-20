@@ -1,5 +1,7 @@
 use clap::arg_enum;
 use structopt::StructOpt;
+use std::process::Command;
+use std::io::{self, Write};
 
 arg_enum! {
 
@@ -61,14 +63,24 @@ fn main() {
 
     println!("---------");
 
-    let commit: String;
+    let commit_message: String;
 
     if let Some(body) = opt.body {
 
-        commit = format!("{}: {}\n\n{}",opt.commit_type.key(), opt.message, body);
+        commit_message = format!("{}: {}\n\n{}",opt.commit_type.key(), opt.message, body);
     } else {
-        commit = format!("{}: {}", opt.commit_type.key(), opt.message);
+        commit_message = format!("{}: {}", opt.commit_type.key(), opt.message);
     }
 
-    println!("{}", commit);
+    println!("{}", commit_message);
+
+    let output = Command::new("git")
+                         .arg("commit")
+                         .arg("-m")
+                         .arg(commit_message)
+                         .output()
+                         .expect("Failed to execute git commit process"); 
+
+    io::stdout().write_all(&output.stdout).unwrap(); 
+    io::stderr().write_all(&output.stderr).unwrap(); 
 }
