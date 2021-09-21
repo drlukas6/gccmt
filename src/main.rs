@@ -75,7 +75,7 @@ fn make_commit_message(opt: &Opt) -> String {
     let urgent = if opt.urgent { "!" } else { "" };
 
     match &opt.body {
-        None => format!("{}{}: {}", urgent, opt.commit_type.key(), opt.message),
-        Some(body) => format!("{}{}: {}\n\n{}", urgent, opt.commit_type.key(), opt.message, body)
+        None => format!("{}{}: {}", opt.commit_type.key(), urgent, opt.message),
+        Some(body) => format!("{}{}: {}\n\n{}", opt.commit_type.key(), urgent, opt.message, body)
     }
 }
