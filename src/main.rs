@@ -1,7 +1,7 @@
 use clap::arg_enum;
-use structopt::StructOpt;
-use std::process::Command;
 use std::io::{self, Write};
+use std::process::Command;
+use structopt::StructOpt;
 
 const GIT_ARG: &str = "git";
 const COMMIT_ARG: &str = "commit";
@@ -16,9 +16,7 @@ arg_enum! {
 }
 
 impl CommitType {
-
     fn key(&self) -> &str {
-
         match self {
             CommitType::Feature => "feature",
             CommitType::Fix => "fix",
@@ -28,7 +26,7 @@ impl CommitType {
             CommitType::Docs => "docs",
             CommitType::Internal => "internal",
             CommitType::Bump => "bump",
-            CommitType::Revert => "revert"
+            CommitType::Revert => "revert",
         }
     }
 }
@@ -36,12 +34,8 @@ impl CommitType {
 #[derive(Debug, StructOpt)]
 #[structopt(name = "Commit options", about = "Commit type, message and body")]
 struct Opt {
-
     /// Commit type for current changes.
-    #[structopt(possible_values = &CommitType::variants(), 
-                case_insensitive = true,
-                short = "t",
-                long = "type")]
+    #[structopt(possible_values = &CommitType::variants(), case_insensitive = true, short = "t", long = "type")]
     commit_type: CommitType,
 
     /// Adds and exlamation point to commit type making note of a breaking change
@@ -54,28 +48,32 @@ struct Opt {
 
     /// Commit body
     #[structopt(short, long)]
-    body: Option<String>
+    body: Option<String>,
 }
 
 fn main() {
-
     let opt = Opt::from_args();
 
     let output = Command::new(GIT_ARG)
-                         .args([COMMIT_ARG, MESSAGE_ARG, &make_commit_message(&opt)])
-                         .output()
-                         .expect("Failed to execute git commit process"); 
+        .args([COMMIT_ARG, MESSAGE_ARG, &make_commit_message(&opt)])
+        .output()
+        .expect("Failed to execute git commit process");
 
-    io::stdout().write_all(&output.stdout).unwrap(); 
-    io::stderr().write_all(&output.stderr).unwrap(); 
+    io::stdout().write_all(&output.stdout).unwrap();
+    io::stderr().write_all(&output.stderr).unwrap();
 }
 
 fn make_commit_message(opt: &Opt) -> String {
-
     let urgent = if opt.urgent { "!" } else { "" };
 
     match &opt.body {
         None => format!("{}{}: {}", opt.commit_type.key(), urgent, opt.message),
-        Some(body) => format!("{}{}: {}\n\n{}", opt.commit_type.key(), urgent, opt.message, body)
+        Some(body) => format!(
+            "{}{}: {}\n\n{}",
+            opt.commit_type.key(),
+            urgent,
+            opt.message,
+            body
+        ),
     }
 }
