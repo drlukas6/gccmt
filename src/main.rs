@@ -67,12 +67,12 @@ fn make_commit_message(opt: &Opt) -> String {
     let urgent = if opt.urgent { "!" } else { "" };
 
     match &opt.body {
-        None => format!("{}{}: {}", opt.commit_type.key(), urgent, opt.message),
+        None => format!("{}{}: {}", opt.commit_type.key(), urgent, opt.message.to_lowercase()),
         Some(body) => format!(
             "{}{}: {}\n\n{}",
             opt.commit_type.key(),
             urgent,
-            opt.message,
+            opt.message.to_lowercase(),
             body
         ),
     }
