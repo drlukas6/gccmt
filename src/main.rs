@@ -64,7 +64,7 @@ fn main() {
     let output = Command::new(GIT_ARG)
                          .arg(COMMIT_ARG)
                          .arg(MESSAGE_ARG)
-                         .arg(make_commit_message(opt.commit_type, opt.message, opt.body))
+                         .arg(make_commit_message(opt.commit_type, opt.message, opt.body, opt.urgent))
                          .output()
                          .expect("Failed to execute git commit process"); 
 
@@ -72,10 +72,12 @@ fn main() {
     io::stderr().write_all(&output.stderr).unwrap(); 
 }
 
-fn make_commit_message(commit_type: CommitType, message: String, body: Option<String>) -> String {
+fn make_commit_message(commit_type: CommitType, message: String, body: Option<String>, urgent: bool) -> String {
+
+    let urgent = if urgent { "!" } else { "" };
 
     match body {
-        None => format!("{}: {}", commit_type.key(), message),
-        Some(body) => format!("{}: {}\n\n{}",commit_type.key(), message, body)
+        None => format!("{}{}: {}", urgent, commit_type.key(), message),
+        Some(body) => format!("{}{}: {}\n\n{}", urgent, commit_type.key(), message, body)
     }
 }
