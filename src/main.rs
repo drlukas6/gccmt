@@ -11,7 +11,7 @@ arg_enum! {
 
     #[derive(Debug)]
     enum CommitType {
-        Feature, Fix, Style, Refactor, Improvement, Docs, Internal, Bump, Revert
+        Feature, Fix, Formatting, Style, Refactor, Improvement, Docs, Internal, Bump, Revert
     }
 }
 
@@ -20,6 +20,7 @@ impl CommitType {
         match self {
             CommitType::Feature => "feature",
             CommitType::Fix => "fix",
+            CommitType::Formatting => "formatting",
             CommitType::Style => "style",
             CommitType::Refactor => "refactor",
             CommitType::Improvement => "improvement",
