@@ -5,6 +5,7 @@ use structopt::StructOpt;
 
 const GIT_ARG: &str = "git";
 const COMMIT_ARG: &str = "commit";
+const PUSH_ARG: &str = "push";
 const MESSAGE_ARG: &str = "-m";
 
 arg_enum! {
@@ -50,6 +51,10 @@ struct Opt {
     /// Commit body
     #[structopt(short, long)]
     body: Option<String>,
+
+    /// If true, pushes the commit
+    #[structopt(short, long)]
+    push: bool,
 }
 
 fn main() {
@@ -62,13 +67,30 @@ fn main() {
 
     io::stdout().write_all(&output.stdout).unwrap();
     io::stderr().write_all(&output.stderr).unwrap();
+
+    if !opt.push {
+        return;
+    }
+
+    let output = Command::new(GIT_ARG)
+        .arg(PUSH_ARG)
+        .output()
+        .expect("Failed to execute git push process");
+
+    io::stdout().write_all(&output.stdout).unwrap();
+    io::stderr().write_all(&output.stderr).unwrap();
 }
 
 fn make_commit_message(opt: &Opt) -> String {
     let urgent = if opt.urgent { "!" } else { "" };
 
     match &opt.body {
-        None => format!("{}{}: {}", opt.commit_type.key(), urgent, opt.message.to_lowercase()),
+        None => format!(
+            "{}{}: {}",
+            opt.commit_type.key(),
+            urgent,
+            opt.message.to_lowercase()
+        ),
         Some(body) => format!(
             "{}{}: {}\n\n{}",
             opt.commit_type.key(),
